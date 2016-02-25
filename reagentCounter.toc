@@ -1,0 +1,7 @@
+## Interface: 11200
+## Title: Reagent Counter
+## Notes: display # of spell reagents. t. kuurtzen
+
+reagentCounter.lua
+
+
