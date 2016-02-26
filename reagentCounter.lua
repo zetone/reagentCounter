@@ -23,15 +23,17 @@
 		end
 	end
 	-------------------------------------------------------------------------------
-	local orig = {}
+	--local orig = {}
 	local function RingMenu()
-		orig.RingMenuFrame_ConfigureButtons = RingMenuFrame_ConfigureButtons
-        function RingMenuFrame_ConfigureButtons()
-            orig.RingMenuFrame_ConfigureButtons()
-			for i = 1, RingMenu_settings.numButtons do
-				addText(getglobal('RingMenuButton'..i))
+		--RCRingMenuFrame_ConfigureButtons = RingMenuFrame_ConfigureButtons
+        --function --RingMenuFrame_ConfigureButtons()
+           -- RCRingMenuFrame_ConfigureButtons()
+			for i = 1, 24 do--RingMenu_settings.numButtons do
+				if getglobal('RingMenuButton'..i) then 	addText(getglobal('RingMenuButton'..i))
+				else return
+				end
 			end
-		end
+		--end
 	end	
 	
 	function bongosActionButtons()
