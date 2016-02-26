@@ -6,11 +6,14 @@
 	local reagentsString, emptyreagentsString = 'Reagents: (.+)', 'Reagents: |cffff2020(.+)|r'
 	
 	local actionBarNames = {'Action', 'BonusAction', 'MultiBarBottomLeft', 'MultiBarBottomRight', 'MultiBarLeft', 'MultiBarRight'}
+	local actionButtonListRef = {}
 	-------------------------------------------------------------------------------
 	local function addText(this)
 		this.text = this:CreateFontString(nil, 'ARTWORK', 'NumberFontNormal')
 		this.text:SetTextColor(1, 1, 1)
 		this.text:SetPoint('BOTTOMRIGHT', this, 'BOTTOMRIGHT', -2, 2)
+		
+		table.insert(actionButtonListRef, this:GetName())
 	end
 	-------------------------------------------------------------------------------
 	-- add fontstring to all buttons
@@ -26,21 +29,25 @@
         function RingMenuFrame_ConfigureButtons()
             orig.RingMenuFrame_ConfigureButtons()
 			for i = 1, RingMenu_settings.numButtons do
-				local bu = _G['RingMenuButton'..i]
-
-				addText(bu)
+				addText(getglobal('RingMenuButton'..i))
 			end
 		end
-	end
+	end	
 	
-	if IsAddOnLoaded'RingMenu' then
-		RingMenu()
-    end
+	function bongosActionButtons()
+		print('bongos test')
+		for i = 1, 120 do
+			local bu = getglobal('BActionButton'..i)	
+			if bu then 
+			addText(bu) 
+			else return	 end
+		end
+	end
 	-------------------------------------------------------------------------------
 	local function checkActionSlots()
 		local lActionSlot = 0;
 		resourceList = {}
-		for lActionSlot = 1, NUM_ACTIONBAR_BUTTONS*NUM_ACTIONBAR_PAGES do
+		for lActionSlot = 1, 120 do--NUM_ACTIONBAR_BUTTONS*NUM_ACTIONBAR_PAGES do
 			local lActionText = GetActionText(lActionSlot)
 			local lActionTexture = GetActionTexture(lActionSlot)
 			if lActionTexture then
@@ -76,28 +83,28 @@
 	end
 	-------------------------------------------------------------------------------
 	local function updateTexts()
-		for k, v in pairs(actionBarNames) do
-			for i = 1, NUM_ACTIONBAR_BUTTONS do
-				local bu = getglobal(v..'Button'..i)
-				local id = ActionButton_GetPagedID(bu)
-				bu.text:SetText(resourceList[id] and getItemCount(resourceList[id]) or '')
-			end
-		end
-		if IsAddOnLoaded'RingMenu' then
-			for i = 1, RingMenu_settings.numButtons do
-				local bu = _G['RingMenuButton'..i]
-				local id = ActionButton_GetPagedID(bu)
-				bu.text:SetText(resourceList[id] and getItemCount(resourceList[id]) or '')
-			end
+		for k, v in pairs(actionButtonListRef) do
+			local bu = getglobal(v)
+			local id = ActionButton_GetPagedID(bu)
+			bu.text:SetText(resourceList[id] and getItemCount(resourceList[id]) or '')
 		end
 	end
 	-------------------------------------------------------------------------------
 	local function eventHandler()
 		if event == 'ADDON_LOADED' then
-			if arg1 =='RingMenu' then
-				RingMenu()
-			end
-		elseif event == 'PLAYER_LOGIN' or event == 'ACTIONBAR_SLOT_CHANGED' then
+			-- bongos
+			if arg1 == 'Bongos_ActionBar' then 	bongosActionButtons() 	end
+			-- ringmenu
+			if arg1 == 'RingMenu' then			RingMenu()			    end
+		elseif event == 'PLAYER_LOGIN' then
+			-- bongos
+			if IsAddOnLoaded'Bongos_ActionBar' then 	bongosActionButtons() 	end
+			-- ringmenu
+			if IsAddOnLoaded'RingMenu' then				RingMenu()			    end
+			--
+			checkActionSlots()
+			updateTexts()
+		elseif event == 'ACTIONBAR_SLOT_CHANGED' then
 			checkActionSlots()
 			updateTexts()
 		else
