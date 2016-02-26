@@ -35,7 +35,6 @@
 	end	
 	
 	function bongosActionButtons()
-		print('bongos test')
 		for i = 1, 120 do
 			local bu = getglobal('BActionButton'..i)	
 			if bu then 
